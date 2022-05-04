@@ -11,8 +11,6 @@ const port = config('PORT');
 // boot up browser
 require('./puppeteer');
 
-require('./purge_expired');
-
 if (config('TRUST_PROXY')) { // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
     app.enable("trust proxy");
 }
