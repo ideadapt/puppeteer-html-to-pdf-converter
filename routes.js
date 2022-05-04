@@ -5,6 +5,7 @@ module.exports.register = function(app) {
     app.post('/generate', [
         check('url').isURL({require_valid_protocol: true, allow_protocol_relative_urls: false, require_tld: true}).optional(),
         check('html').optional(),
+        check('filename').optional(),
         check('url_html').custom((value, {req}) => {
             if (!req.body.html && !req.body.url) {
                 throw new Error("Must provide either url or html");

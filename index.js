@@ -2,6 +2,7 @@ const express = require('express')
 const config = require('./config.js');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const cors = require('cors');
 const slowDown = require("express-slow-down");
 const upload = multer();
 let app = express()
@@ -21,10 +22,10 @@ const speedLimiter = slowDown({
   delayAfter: config('RATE_LIMIT_DELAY_AFTER'),
   delayMs: config('RATE_LIMIT_DELAY_MS')
 });
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(upload.array());
+app.use(cors())
 app.use(express.static('static'))
 app.use(speedLimiter);
 

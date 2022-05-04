@@ -16,7 +16,6 @@ module.exports = async function(req, res) {
     const timestamp = Math.round(Date.now() / 1000);
     const randomID = `${timestamp}-${revisedRandId()}`;
     const pdfOptions = {
-        path: `static/exports/${randomID}.pdf`,
         format: 'A4',
         margin: {
             top: 0,
@@ -51,16 +50,13 @@ module.exports = async function(req, res) {
     } else {
         await page.setContent(req.body.html);
     }
-    await page.pdf(pdfOptions);
+    const bytes = await page.pdf(pdfOptions);
 
     await page.close();
 
-    return res.status(200).json({
-        success: true,
-        url: `${baseURL}/exports/${randomID}.pdf`,
-        path: `/exports/${randomID}.pdf`,
-        expires: timestamp + expiresIn
-    });
+    res.set("Content-Type", "application/octet-stream")
+    res.set("Content-Disposition", `attachment;filename=${req.body['filename'] || 'generated-file'}.pdf`)
+    return res.status(200).send(Buffer.from(bytes, 'binary'))
 }
 
 function revisedRandId() {
