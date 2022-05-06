@@ -1,3 +1,4 @@
+# https://fly.io/docs/reference/configuration
 app = "html2pdf"
 
 kill_signal = "SIGINT"
@@ -13,14 +14,23 @@ PORT = 8080
 [experimental]
 allowed_public_ports = []
 auto_rollback = true
-cmd = ["node", "index.js"]
+cmd = ["node", "--unhandled-rejections=strict" , "index.js"]
 
 [[services]]
-http_checks = []
 internal_port = 8080
 processes = ["app"]
 protocol = "tcp"
 script_checks = []
+
+[[services.http_checks]]
+interval = 10000
+grace_period = "10s"
+method = "get"
+path = "/"
+protocol = "http"
+restart_limit = 2
+timeout = 2000
+tls_skip_verify = false
 
 [services.concurrency]
 hard_limit = 25

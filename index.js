@@ -11,14 +11,15 @@ const port = config('PORT');
 // boot up browser
 require('./puppeteer');
 
-if (config('TRUST_PROXY')) { // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
+// only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
+if (config('TRUST_PROXY')) {
     app.enable("trust proxy");
 }
 
 const speedLimiter = slowDown({
-  windowMs: config('RATE_LIMIT_WINDOW') * 60 * 1000,
-  delayAfter: config('RATE_LIMIT_DELAY_AFTER'),
-  delayMs: config('RATE_LIMIT_DELAY_MS')
+  windowMs: (config('RATE_LIMIT_WINDOW') || 1) * 60 * 1000, // within 1min
+  delayAfter: (config('RATE_LIMIT_DELAY_AFTER') || 20), // allow 12 req (one every 3sec)
+  delayMs: config('RATE_LIMIT_DELAY_MS') || 500 // add 500m delay per request, if not slowed down
 });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,4 +32,4 @@ app = require('./routes').register(app);
 
 app.use(express.static('static'));
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Listening on port ${port}!`));

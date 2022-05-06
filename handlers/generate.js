@@ -1,8 +1,4 @@
 const { validationResult } = require('express-validator');
-const puppeteer = require('puppeteer');
-const config = require('../config');
-const baseURL = config('BASE_URL');
-const expiresIn = config('EXPIRES_IN');
 
 module.exports = async function(req, res) {
     const errors = validationResult(req);
@@ -11,10 +7,11 @@ module.exports = async function(req, res) {
             success: true, 
             errors: errors.errors
         });
-    };
+    }
+    if (!global.browser) {
+        return res.status(503)
+    }
 
-    const timestamp = Math.round(Date.now() / 1000);
-    const randomID = `${timestamp}-${revisedRandId()}`;
     const pdfOptions = {
         format: 'A4',
         margin: {
@@ -35,15 +32,11 @@ module.exports = async function(req, res) {
                 pdfOptions[option] = req.body[option];
             }
         }
-
         if (req.body[option] && option.includes('margin')) {
             pdfOptions.margin[option.replace('margin.', '')] = req.body[option];
         }
     }
 
-    if (!global.browser) {
-        global.browser = await puppeteer.launch({ args: ['--no-sandbox'] })
-    }
     const page = await global.browser.newPage();
     if (req.body.url) {
         await page.goto(req.body.url);
@@ -51,14 +44,9 @@ module.exports = async function(req, res) {
         await page.setContent(req.body.html);
     }
     const bytes = await page.pdf(pdfOptions);
-
     await page.close();
 
     res.set("Content-Type", "application/octet-stream")
     res.set("Content-Disposition", `attachment;filename=${req.body['filename'] || 'generated-file'}.pdf`)
     return res.status(200).send(Buffer.from(bytes, 'binary'))
-}
-
-function revisedRandId() {
-     return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
 }

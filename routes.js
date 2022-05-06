@@ -10,7 +10,6 @@ module.exports.register = function(app) {
             if (!req.body.html && !req.body.url) {
                 throw new Error("Must provide either url or html");
             }
-
             return true;
         }),
         check('scale').custom((value, {req}) => {
@@ -20,7 +19,6 @@ module.exports.register = function(app) {
             if (Number.isNaN(value) || value < 0.1 || value > 2) {
                 throw new Error("scale must be between 0.1 and 2");
             }
-
             return true;
         }),
         check('displayHeaderFooter').isBoolean().optional(),
@@ -32,33 +30,28 @@ module.exports.register = function(app) {
             if (!value) {
                 return true; // optional
             }
-
             const pageRanges = value.split('-');
             if (Number.isNaN(pageRanges[0]) || Number.isNaN(pageRanges[1])) {
                 throw new Error("Invalid page range. Must be like 2-5");
             }
-
             return true;
         }),
         check('format').custom((value, {req}) => {
             if (!value) {
                 return true;
             }
-
             const options = ['Letter', 'Legal', 'Tabloid', 'Ledger', 'A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6'];
-
             if (options.indexOf(value) === -1) {
-                throw new Error(`format must be one of ${options.join(',')}`);
+                throw new Error(`Format must be one of ${options.join(',')}`);
             }
-
             return true;
         }),
         check('width').isNumeric().optional(),
         check('height').isNumeric().optional(),
-        check('margin.top').optional(),
-        check('margin.right').optional(),
-        check('margin.bottom').optional(),
-        check('margin.left').optional(),
+        check('margin.top').matches(/\d+\w+/).optional(),
+        check('margin.right').matches(/\d+\w+/).optional(),
+        check('margin.bottom').matches(/\d+\w+/).optional(),
+        check('margin.left').matches(/\d+\w+/).optional(),
         check('preferCSSPageSize').isBoolean().optional()
     ], require('./handlers/generate'));
 
