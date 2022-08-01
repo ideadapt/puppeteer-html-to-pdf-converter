@@ -4,7 +4,7 @@ module.exports = async function(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({
-            success: true, 
+            success: false,
             errors: errors.errors
         });
     }
