@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Free HTML to PDF Converter - Demo HTTP API Client</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function createPDFDownloadLink(blob) {
+                const a = document.createElement('a');
+                a.download = 'generated-file.pdf';
+                a.href = URL.createObjectURL(blob);
+                return a;
+            }
+            async function generatePDF(html){
+                let pdfGeneratorUrl = 'https://html2pdf.fly.dev/generate'
+                const data = await fetch(pdfGeneratorUrl, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': "application/json",
+                        accept: 'application/json'
+                    },
+                    body: JSON.stringify({ html })
+                })
+
+                if(data.ok){
+                    return new Blob([await data.blob()], {type: 'application/pdf'})
+                }else{
+                    throw await data.json()
+                }
+            }
+            document.querySelector('#convert').addEventListener('click', async ()=>{
+                try{
+                    const pdfBlob = await generatePDF(document.querySelector('#html-code').value)
+                    createPDFDownloadLink(pdfBlob).click()
+                }catch(ex){
+                    console.error(ex)
+                    alert(ex.message ? ex.message : ex.errors.map(JSON.stringify).join('<br/>'))
+                }
+            })
+        })
+    </script>
+    <style>
+        body{
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        h1{
+            text-align: center;
+        }
+        em{
+            font-weight: bold;
+        }
+        .container{
+            width: 90vw;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        #html-code{
+            min-width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Free HTML to PDF Converter</h1>
+    <div>
+        <textarea name="html-code" id="html-code" rows="30" placeholder="Insert HTML source code here"></textarea>
+    </div>
+    <br>
+    <button id="convert">Convert to PDF</button>
+    <br><br>
+
+    <h2>API Usage</h2>
+    <p>This website demonstrates the usage of the <a href="https://github.com/ideadapt/puppeteer-html-to-pdf-converter">HTML to PDF Converter HTTP API</a>.
+        An instance of that API application is deployed via docker on <a href="https://html2pdf.fly.dev">https://html2pdf.fly.dev</a>. It exposes a simple HTTP API to convert any HTML source code to a PDF file.
+        That <em>API is free for use</em>, no authentication required. <a href="https://github.com/ideadapt/puppeteer-html-to-pdf-converter">Full API docs</a>.</p>
+
+    <h3>JavaScript</h3>
+    <p>A minimalistic example client using JavaScript in the browser:</p>
+    <pre>
+    async function generatePDF(html){
+        let pdfGeneratorUrl = 'https://html2pdf.fly.dev/generate'
+        const data = await fetch(pdfGeneratorUrl, {
+            method: 'POST',
+            headers: {
+                'content-type': "application/json",
+                accept: 'application/json'
+            },
+            body: JSON.stringify({ html })
+        })
+
+        if(data.ok){
+            return new Blob([await data.blob()], {type: 'application/pdf'})
+        }else{
+            throw await data.json()
+        }
+    }
+</pre>
+</div>
+</body>
+</html>
