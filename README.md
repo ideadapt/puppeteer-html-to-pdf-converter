@@ -1,47 +1,42 @@
-# Puppeteer HTML to PDF converter REST api
+# HTML to PDF converter HTTP API
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+This is a cloud ready HTML to PDF converter application running inside docker accessible via an HTTP API.
 
-This is a html to pdf converter rest api which converts web pages to pdfs using the headless chrome instance powered by [Puppeteer](https://github.com/GoogleChrome/puppeteer).
-
-## Usage
+## HTT API Usage
 ### `POST /generate`
+
+The number of requests per minute per client is limited.
 
 **Parameters**
 
-The api doesn't care much how you send the parameters. Wether it's form-data form-urlencoded or as raw json. It's all welcome here.
+Following parameters are supported. Send them as form-data form-urlencoded or as raw json.
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `url` | `string` | **Required if no html**. The url of the webpage to convert to pdf |
-| `html` | `string` | **Required if no url**. The html to convert to pdf |
-| `scale` | `string` | **Optional**. Scale of the webpage rendering. Defaults to 1. Scale amount must be between 0.1 and 2 |
-| `displayHeaderFooter` | `boolean` | **Optional**. Display header and footer. Defaults to `false ` |
-| `headerTemplate` | `string` | **Optional**. HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: `date`, `title`, `url`, `pageNumber`, `totalPages` |
-| `footerTemplate` | `string` | **Optional**. HTML template for the print footer. Should use the same format as the `headerTemplate` |
-| `printBackground` | `boolean` | **Optional**. Print background graphics. Defaults to `false` |
-| `landscape` | `boolean` | **Optional**. Paper orientation. Defaults to `false` |
-| `pageRanges` | `string` | **Optional**. Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages |
-| `format` | `string` | **Optional**. Paper format. If set, takes priority over width or height options. Defaults to 'Letter' |
-| `width` | `integer` | **Optional**. Paper width, accepts values labeled with units |
-| `height` | `integer` | **Optional**. Paper height, accepts values labeled with units |
-| `margin.top` | `integer` | **Optional**. Top margin, accepts values labeled with units |
-| `margin.right` | `integer` | **Optional**. Right margin, accepts values labeled with units |
-| `margin.bottom` | `integer` | **Optional**. Bottom margin, accepts values labeled with units |
-| `margin.left` | `integer` | **Optional**. Left margin, accepts values labeled with units |
-| `preferCSSPageSize` | `boolean` | **Optional**. Give any CSS `@page` size declared in the page priority over what is declared in `width` and `height` or `format` options. Defaults to `false`, which will scale the content to fit the paper size |
+| Parameter             | Type | Description                                                                                                                                                                                                      |
+|:----------------------| :--- |:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `url`                 | `string` | **Required if no html**. The url of the webpage to convert to pdf                                                                                                                                                |
+| `html`                | `string` | **Required if no url**. The html to convert to pdf                                                                                                                                                               |
+| `filename`            | `string` | **Optional**. The name of generated PDF file in the download response, without extension. Defaults to `generated-file`.                                                                                          |
+| `scale`               | `string` | **Optional**. Scale of the webpage rendering. Scale amount must be between 0.1 and 2. Defaults to 1.                                                                                                             |
+| `displayHeaderFooter` | `boolean` | **Optional**. Display header and footer. Defaults to `false `                                                                                                                                                    |
+| `headerTemplate`      | `string` | **Optional**. HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: `date`, `title`, `url`, `pageNumber`, `totalPages`                |
+| `footerTemplate`      | `string` | **Optional**. HTML template for the print footer. Should use the same format as the `headerTemplate`                                                                                                             |
+| `printBackground`     | `boolean` | **Optional**. Print background graphics. Defaults to `false`                                                                                                                                                     |
+| `landscape`           | `boolean` | **Optional**. Paper orientation. Defaults to `false`                                                                                                                                                             |
+| `pageRanges`          | `string` | **Optional**. Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages                                                                                            |
+| `format`              | `string` | **Optional**. Paper format. If set, takes priority over width or height options. Defaults to 'A4'                                                                                                                |
+| `width`               | `integer` | **Optional**. Paper width, accepts values labeled with units                                                                                                                                                     |
+| `height`              | `integer` | **Optional**. Paper height, accepts values labeled with units                                                                                                                                                    |
+| `margin.top`          | `integer` | **Optional**. Top margin, accepts values labeled with units. Defaults to `0`                                                                                                                                     |
+| `margin.right`        | `integer` | **Optional**. Right margin, accepts values labeled with units. Defaults to `0`                                                                                                                                   |
+| `margin.bottom`       | `integer` | **Optional**. Bottom margin, accepts values labeled with units. Defaults to `0`                                                                                                                                  |
+| `margin.left`         | `integer` | **Optional**. Left margin, accepts values labeled with units. Defaults to `0`                                                                                                                                                   |
+| `preferCSSPageSize`   | `boolean` | **Optional**. Give any CSS `@page` size declared in the page priority over what is declared in `width` and `height` or `format` options. Defaults to `false`, which will scale the content to fit the paper size |
+
+Since most of these options are forwarded to puppeteer, a more detailed description might be available at https://pptr.dev/api/puppeteer.pdfoptions.
 
 **Response**
 
-If the request was succesful the response will look like this:
-```
-{
-    "success": true,
-    "url": "https://immense-citadel-73637.herokuapp.com/exports/1564590445-necij.pdf",
-    "path": "/exports/1564590445-necij.pdf",
-    "expires": 1564590505
-}
-```
+If the request was successful the response will be an HTTP attachment, i.e. a binary stream of the PDF data.
 
 If one of the parameters was invalid the request will look something like:
 ```
@@ -59,11 +54,11 @@ If one of the parameters was invalid the request will look something like:
 
 ## Installation
 
-Aside from the option to deploy this project on Heroku the instruction below is meant for either a local or standalone setup.
+Aside from the option to deploy this project via docker (to e.g. fly.io), the instruction below is meant for a none docker setup.
 
 1. Clone the repo
 ```
-git clone https://github.com/fritsvt/puppeteer-html-to-pdf-converter.git
+git clone https://github.com/ideadapt/puppeteer-html-to-pdf-converter.git
 ```
 2. Navigate in the project directory
 ```
@@ -83,21 +78,21 @@ cp config-example.json config.json
 npm run start
 ```
 
-## Technologies
-[puppeteer](https://github.com/GoogleChrome/puppeteer)
+## Implementation Details
+This repo is based on https://github.com/fritsvt/puppeteer-html-to-pdf-converter.git. 
 
-[expressjs](https://github.com/expressjs/express)
+The following changes were applied:
 
-[express-slow-down](https://github.com/nfriedly/express-slow-down)
-
-[express-validator](https://github.com/express-validator/express-validator)
-
-[cors](https://github.com/expressjs/cors)
-
-[multer](https://github.com/expressjs/multer)
+- Containerize application. This allows running the whole application (including puppeteer) on any platform that has docker installed. \
+  This is a major benefit, because properly installing puppeteer is cumbersome, depending on the platform.
+- Changed response format from a temporary URL to a file download (binary stream). \
+  This reduced the complexity and platform requirements on the server side, because the generated PDF files are not stored on the disk anymore.
+- Bug fixes: Margin parameter validation fixes.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
+This repo is based on https://github.com/fritsvt/puppeteer-html-to-pdf-converter.git .
+
 [MIT](LICENSE)

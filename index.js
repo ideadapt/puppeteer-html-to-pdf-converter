@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const cors = require('cors');
 const slowDown = require("express-slow-down");
+
 const upload = multer();
 let app = express()
 const port = config('PORT');
@@ -18,8 +19,8 @@ if (config('TRUST_PROXY')) {
 
 const speedLimiter = slowDown({
   windowMs: (config('RATE_LIMIT_WINDOW') || 1) * 60 * 1000, // within 1min
-  delayAfter: (config('RATE_LIMIT_DELAY_AFTER') || 20), // allow 12 req (one every 3sec)
-  delayMs: config('RATE_LIMIT_DELAY_MS') || 500 // add 500m delay per request, if not slowed down
+  delayAfter: (config('RATE_LIMIT_DELAY_AFTER') || 20), // allow 20 req (one every 3sec)
+  delayMs: config('RATE_LIMIT_DELAY_MS') || 500 // add 500ms delay per request, if not slowed down
 });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -2,4 +2,3 @@ node_modules
 config.json
 .idea
 .DS_Store
-static/exports

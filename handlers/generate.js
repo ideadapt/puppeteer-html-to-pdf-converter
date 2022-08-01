@@ -26,7 +26,7 @@ module.exports = async function(req, res) {
     const integerOptions = ['scale', 'width', 'height'];
     for (const option of availableOptions) {
         if (req.body[option] && !option.includes('margin')) {
-            if (integerOptions.indexOf(option) > -1) {
+            if (integerOptions.includes(option)) {
                 pdfOptions[option] = Number(req.body[option]);
             } else {
                 pdfOptions[option] = req.body[option];

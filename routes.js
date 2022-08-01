@@ -46,8 +46,8 @@ module.exports.register = function(app) {
             }
             return true;
         }),
-        check('width').isNumeric().optional(),
-        check('height').isNumeric().optional(),
+        check('width').matches(/\d+\w+/).optional(),
+        check('height').matches(/\d+\w+/).optional(),
         check('margin.top').matches(/\d+\w+/).optional(),
         check('margin.right').matches(/\d+\w+/).optional(),
         check('margin.bottom').matches(/\d+\w+/).optional(),

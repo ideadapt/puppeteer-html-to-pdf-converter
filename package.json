@@ -1,7 +1,7 @@
 {
   "name": "puppeteer-html-to-converter",
   "version": "1.0.0",
-  "description": "A html to pdf converter rest api which generates it's pdfs using the a headless chrome instance powered by Puppeteer",
+  "description": "Cloud ready HTML to PDF converter application running inside docker accessible via an HTTP API",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,7 +9,7 @@
     "docker:image": "docker build -t ideadapt/puppeteer-html-to-pdf-converter:1.0.1 .",
     "deploy:flyctl": "flyctl deploy"
   },
-  "author": "Frits van Turnhout",
+  "author": "Ueli Kunz <kunz@ideadapt.net>",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
