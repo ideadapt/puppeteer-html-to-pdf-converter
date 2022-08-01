@@ -32,7 +32,7 @@ Following parameters are supported. Send them as form-data form-urlencoded or as
 | `margin.left`         | `integer` | **Optional**. Left margin, accepts values labeled with units. Defaults to `0`                                                                                                                                    |
 | `preferCSSPageSize`   | `boolean` | **Optional**. Give any CSS `@page` size declared in the page priority over what is declared in `width` and `height` or `format` options. Defaults to `false`, which will scale the content to fit the paper size |
 
-Since most of these options are forwarded to puppeteer, a more detailed description might be available at https://pptr.dev/api/puppeteer.pdfoptions.
+Since most of these options are forwarded to puppeteer, a more detailed description might be available at https://www.jsdocs.io/package/puppeteer-core/v/13.7.0#PDFOptions.
 
 **Response**
 
@@ -54,7 +54,7 @@ If one of the parameters was invalid the request will look something like:
 
 ## Demo Client Application
 
-Go to https://html2pdf.fly.dev/html-js-client 
+Go to https://html2pdf.fly.dev
 
 ## Installation
 

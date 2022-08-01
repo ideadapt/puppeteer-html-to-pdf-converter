@@ -12,7 +12,7 @@
                 return a;
             }
             async function generatePDF(html){
-                let pdfGeneratorUrl = 'https://html2pdf.fly.dev/generate'
+                let pdfGeneratorUrl = 'https://html2pdf.fly.dev/api/generate'
                 const data = await fetch(pdfGeneratorUrl, {
                     method: 'POST',
                     headers: {
@@ -71,14 +71,14 @@
 
     <h2>API Usage</h2>
     <p>This website demonstrates the usage of the <a href="https://github.com/ideadapt/puppeteer-html-to-pdf-converter">HTML to PDF Converter HTTP API</a>.
-        An instance of that API application is deployed via docker on <a href="https://html2pdf.fly.dev">https://html2pdf.fly.dev</a>. It exposes a simple HTTP API to convert any HTML source code to a PDF file.
+        An instance of that API application is deployed via docker on <a href="https://html2pdf.fly.dev/api">https://html2pdf.fly.dev/api</a>. It exposes a simple HTTP API to convert any HTML source code to a PDF file.
         That <em>API is free for use</em>, no authentication required. <a href="https://github.com/ideadapt/puppeteer-html-to-pdf-converter">Full API docs</a>.</p>
 
     <h3>JavaScript</h3>
     <p>A minimalistic example client using JavaScript in the browser:</p>
     <pre>
     async function generatePDF(html){
-        let pdfGeneratorUrl = 'https://html2pdf.fly.dev/generate'
+        let pdfGeneratorUrl = 'https://html2pdf.fly.dev/api/generate'
         const data = await fetch(pdfGeneratorUrl, {
             method: 'POST',
             headers: {

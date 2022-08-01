@@ -28,11 +28,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, limit: config('HTML_MAX_LENGTH') || '1mb' }));
 app.use(upload.array());
 app.use(cors())
-app.use(express.static('demo'))
+app.use(express.static('demo/html-js-client'))
 app.use(speedLimiter);
 
 app = require('./routes').register(app);
 
-app.use(express.static('static'));
 
 app.listen(port, () => console.log(`listening on port ${port}!`));
