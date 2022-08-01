@@ -53,7 +53,7 @@ module.exports.register = function(app) {
         check('margin.bottom').matches(/\d+\w+/).optional(),
         check('margin.left').matches(/\d+\w+/).optional(),
         check('preferCSSPageSize').isBoolean().optional()
-    ], require('./handlers/generate'));
+    ], require('./generate'));
 
     return app;
 }

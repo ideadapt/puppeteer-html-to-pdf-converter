@@ -2,10 +2,10 @@
   "name": "puppeteer-html-to-converter",
   "version": "1.0.0",
   "description": "Cloud ready HTML to PDF converter application running inside docker accessible via an HTTP API",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index",
+    "start": "node src/index.js",
     "docker:image": "docker build -t ideadapt/puppeteer-html-to-pdf-converter:1.0.1 .",
     "deploy:flyctl": "flyctl deploy"
   },

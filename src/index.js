@@ -1,13 +1,15 @@
 const express = require('express')
 const config = require('./config.js');
+
+const port = config('PORT')
+if (!port) throw new Error('PORT config is required')
+
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const cors = require('cors');
 const slowDown = require("express-slow-down");
-
 const upload = multer();
 let app = express()
-const port = config('PORT');
 
 // boot up browser
 require('./puppeteer');
@@ -33,4 +35,4 @@ app = require('./routes').register(app);
 
 app.use(express.static('static'));
 
-app.listen(port, () => console.log(`Listening on port ${port}!`));
+app.listen(port, () => console.log(`listening on port ${port}!`));
