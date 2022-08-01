@@ -3,7 +3,7 @@
 This is a cloud ready HTML to PDF converter application running inside docker accessible via an HTTP API.
 
 ## HTT API Usage
-### `POST /generate`
+### `POST /api/generate`
 
 The number of requests per minute per client is limited.
 
