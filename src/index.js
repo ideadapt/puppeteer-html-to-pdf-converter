@@ -25,7 +25,7 @@ const speedLimiter = slowDown({
   delayMs: config('RATE_LIMIT_DELAY_MS') || 500 // add 500ms delay per request, if not slowed down
 });
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: config('HTML_MAX_LENGTH') || '1mb' }));
 app.use(upload.array());
 app.use(cors())
 app.use(express.static('demo'))

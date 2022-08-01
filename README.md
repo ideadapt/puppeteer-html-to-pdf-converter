@@ -7,14 +7,14 @@ This is a cloud ready HTML to PDF converter application running inside docker ac
 
 The number of requests per minute per client is limited.
 
-**Parameters**
+**Request Parameters**
 
 Following parameters are supported. Send them as form-data form-urlencoded or as raw json.
 
 | Parameter             | Type | Description                                                                                                                                                                                                      |
 |:----------------------| :--- |:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `url`                 | `string` | **Required if no html**. The url of the webpage to convert to pdf                                                                                                                                                |
-| `html`                | `string` | **Required if no url**. The html to convert to pdf                                                                                                                                                               |
+| `url`                 | `string` | **Required if no html**. The url of the webpage to convert to PDF                                                                                                                                                |
+| `html`                | `string` | **Required if no url**. The html to convert to PDF. String length is by default limited to 1 mega byte.                                                                                                       |
 | `filename`            | `string` | **Optional**. The name of generated PDF file in the download response, without extension. Defaults to `generated-file`.                                                                                          |
 | `scale`               | `string` | **Optional**. Scale of the webpage rendering. Scale amount must be between 0.1 and 2. Defaults to 1.                                                                                                             |
 | `displayHeaderFooter` | `boolean` | **Optional**. Display header and footer. Defaults to `false `                                                                                                                                                    |
@@ -29,7 +29,7 @@ Following parameters are supported. Send them as form-data form-urlencoded or as
 | `margin.top`          | `integer` | **Optional**. Top margin, accepts values labeled with units. Defaults to `0`                                                                                                                                     |
 | `margin.right`        | `integer` | **Optional**. Right margin, accepts values labeled with units. Defaults to `0`                                                                                                                                   |
 | `margin.bottom`       | `integer` | **Optional**. Bottom margin, accepts values labeled with units. Defaults to `0`                                                                                                                                  |
-| `margin.left`         | `integer` | **Optional**. Left margin, accepts values labeled with units. Defaults to `0`                                                                                                                                                   |
+| `margin.left`         | `integer` | **Optional**. Left margin, accepts values labeled with units. Defaults to `0`                                                                                                                                    |
 | `preferCSSPageSize`   | `boolean` | **Optional**. Give any CSS `@page` size declared in the page priority over what is declared in `width` and `height` or `format` options. Defaults to `false`, which will scale the content to fit the paper size |
 
 Since most of these options are forwarded to puppeteer, a more detailed description might be available at https://pptr.dev/api/puppeteer.pdfoptions.
