@@ -58,29 +58,45 @@ Go to https://html2pdf.fly.dev
 
 ## Installation
 
-Aside from the option to deploy this project via docker (to e.g. fly.io), the instruction below is meant for a none docker setup.
-
 1. Clone the repo
 ```
 git clone https://github.com/ideadapt/puppeteer-html-to-pdf-converter.git
 ```
+
 2. Navigate in the project directory
 ```
 cd puppeteer-html-to-pdf-converter
 ```
-3. Install the npm dependencies
-```
-npm install
-```
-4. Copy the contents of [config-example.json](config-example.json) and place them in a new config.json
+
+3. Copy the contents of [config-example.json](config-example.json) and place them in a new config.json
 ```
 cp config-example.json config.json
 ```
-5. Fill in the config.json with your configuration
+
+4. Fill in the config.json with your configuration
+
+### Non Docker
+5. Install the npm dependencies
+```
+npm install
+```
+
 6. Run the app
 ```
 npm run start
 ```
+
+### Docker
+5. Build the docker image
+```
+npm run docker:image
+```
+
+6. Run the app inside a docker container
+```
+docker run -i --init --rm --cap-add=SYS_ADMIN --name html2pdf -p 3000:3000 ideadapt/puppeteer-html-to-pdf-converter:1.0.1 node src/index.js
+```
+
 
 ## Implementation Details
 This repo is based on https://github.com/fritsvt/puppeteer-html-to-pdf-converter.git. 
