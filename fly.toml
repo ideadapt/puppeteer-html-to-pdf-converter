@@ -14,7 +14,7 @@ PORT = 8080
 [experimental]
 allowed_public_ports = []
 auto_rollback = true
-cmd = ["node", "--unhandled-rejections=strict" , "index.js"]
+cmd = ["node", "--unhandled-rejections=strict" , "src/index.js"]
 
 [[services]]
 internal_port = 8080

@@ -52,6 +52,10 @@ If one of the parameters was invalid the request will look something like:
 }
 ```
 
+## Demo Client Application
+
+Go to https://html2pdf.fly.dev/html-js-client 
+
 ## Installation
 
 Aside from the option to deploy this project via docker (to e.g. fly.io), the instruction below is meant for a none docker setup.
