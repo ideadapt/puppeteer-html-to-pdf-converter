@@ -38,7 +38,7 @@ Since most of these options are forwarded to puppeteer, a more detailed descript
 
 If the request was successful the response will be an HTTP attachment, i.e. a binary stream of the PDF data.
 
-If one of the parameters was invalid the request will look something like:
+If one of the parameters was invalid the response will look something like:
 ```
 {
     "success": false,
@@ -107,7 +107,8 @@ The following changes were applied:
   This is a major benefit, because properly installing puppeteer is cumbersome, depending on the platform.
 - Changed response format from a temporary URL to a file download (binary stream). \
   This reduced the complexity and platform requirements on the server side, because the generated PDF files are not stored on the disk anymore.
-- Bug fixes: Margin parameter validation fixes.
+- Make request body size limit configurable.
+- Bug fixes: Margin parameter validation fixes. Errors are returned as JSON, not plain text.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

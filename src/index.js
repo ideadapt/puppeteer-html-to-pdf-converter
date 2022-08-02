@@ -5,6 +5,7 @@ const port = config('PORT')
 if (!port) throw new Error('PORT config is required')
 
 const bodyParser = require('body-parser');
+const bodyParserErrorHandler = require('express-body-parser-error-handler')
 const multer = require('multer');
 const cors = require('cors');
 const slowDown = require("express-slow-down");
@@ -24,14 +25,16 @@ const speedLimiter = slowDown({
   delayAfter: (config('RATE_LIMIT_DELAY_AFTER') || 20), // allow 20 req (one every 3sec)
   delayMs: config('RATE_LIMIT_DELAY_MS') || 500 // add 500ms delay per request, if not slowed down
 });
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true, limit: config('HTML_MAX_LENGTH') || '1mb' }));
+const limit = config('HTML_MAX_LENGTH') || '1mb'
+app.use(bodyParser.json({ limit }));
+app.use(bodyParser.urlencoded({ extended: true, limit }));
+app.use(bodyParserErrorHandler());
 app.use(upload.array());
-app.use(cors())
-app.use(express.static('demo/html-js-client'))
+app.use(cors());
+app.use(express.static('demo/html-js-client'));
 app.use(speedLimiter);
 
 app = require('./routes').register(app);
 
 
-app.listen(port, () => console.log(`listening on port ${port}!`));
+app.listen(port, () => console.log(`listening on port ${port}`));

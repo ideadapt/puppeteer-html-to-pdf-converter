@@ -1,6 +1,10 @@
 const { validationResult } = require('express-validator');
 
 module.exports = async function(req, res) {
+    if(!req.headers['content-type']){
+        return res.status(406).json({success: false, errors: [{msg: 'Missing content-type header'}]})
+    }
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({
@@ -8,8 +12,10 @@ module.exports = async function(req, res) {
             errors: errors.errors
         });
     }
+
     if (!global.browser) {
         return res.status(503)
+
     }
 
     const pdfOptions = {
