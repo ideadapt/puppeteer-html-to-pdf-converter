@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
     "docker:image": "docker build -t ideadapt/puppeteer-html-to-pdf-converter:1.0.1 .",
-    "deploy:flyctl": "flyctl deploy"
+    "deploy:flyctl": "flyctl deploy",
+    "release": "npm run docker:image && npm run deploy:flyctl"
   },
   "author": "Ueli Kunz <kunz@ideadapt.net>",
   "license": "MIT",
@@ -18,7 +19,6 @@
     "express-body-parser-error-handler": "^1.0.4",
     "express-slow-down": "^1.3.1",
     "express-validator": "^6.1.1",
-    "multer": "^1.4.2",
     "puppeteer": "^13.7.0"
   },
   "engines": {

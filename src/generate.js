@@ -15,7 +15,6 @@ module.exports = async function(req, res) {
 
     if (!global.browser) {
         return res.status(503)
-
     }
 
     const pdfOptions = {

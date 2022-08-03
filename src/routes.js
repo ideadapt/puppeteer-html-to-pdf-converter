@@ -53,6 +53,4 @@ module.exports.register = function(app) {
         check('margin.left').matches(/\d+\w+/).optional(),
         check('preferCSSPageSize').isBoolean().optional()
     ], require('./generate'));
-
-    return app;
 }
