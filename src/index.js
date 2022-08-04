@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 const config = require('./config.js');
 
 const port = config('PORT')
@@ -29,6 +30,7 @@ app.use(bodyParser.json({ limit: bodyMaxLength }));
 app.use(bodyParser.urlencoded({ extended: true, limit: bodyMaxLength }));
 app.use(bodyParserErrorHandler());
 
+app.use(morgan('[:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":user-agent" :response-time ms'));
 app.use(cors());
 app.use(express.static('demo/html-js-client'));
 require('./routes').register(app);
