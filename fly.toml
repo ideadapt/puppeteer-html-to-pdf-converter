@@ -23,7 +23,7 @@ protocol = "tcp"
 script_checks = []
 
 [[services.http_checks]]
-interval = 10000
+interval = 120000 # 2 * 60 * 1000 => 2min
 grace_period = "10s"
 method = "get"
 path = "/"
