@@ -6,7 +6,7 @@ kill_timeout = 5
 processes = []
 
 [build]
-image = "ideadapt/puppeteer-html-to-pdf-converter:1.0.1"
+image = "ideadapt/puppeteer-html-to-pdf-converter:1.0.14"
 
 [env]
 PORT = 8080

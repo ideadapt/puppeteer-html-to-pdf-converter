@@ -94,7 +94,7 @@ npm run docker:image
 
 6. Run the app inside a docker container
 ```
-docker run -i --init --rm --cap-add=SYS_ADMIN --name html2pdf -p 3000:3000 ideadapt/puppeteer-html-to-pdf-converter:1.0.1 node src/index.js
+docker run -i --init --rm --cap-add=SYS_ADMIN --name html2pdf -p 3000:3000 ideadapt/puppeteer-html-to-pdf-converter:1.0.14 node src/index.js
 ```
 
 
