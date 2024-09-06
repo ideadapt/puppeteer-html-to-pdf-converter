@@ -20,8 +20,12 @@ if (config('TRUST_PROXY')) {
 
 const speedLimiter = slowDown({
   windowMs: (config('RATE_LIMIT_WINDOW') || 1) * 60 * 1000, // within 1min
-  delayAfter: (config('RATE_LIMIT_DELAY_AFTER') || 20), // allow 20 req (one every 3sec)
-  delayMs: config('RATE_LIMIT_DELAY_MS') || 500 // add 500ms delay per request, if not slowed down
+  delayAfter:  () => {
+      return config('RATE_LIMIT_DELAY_AFTER') || 20 // allow 20 req (one every 3sec)
+  },
+  delayMs: () => {
+      return config('RATE_LIMIT_DELAY_MS') || 500 // add 500ms delay per request, if not slowed down
+  }
 });
 app.use(speedLimiter);
 

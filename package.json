@@ -1,28 +1,29 @@
 {
   "name": "puppeteer-html-to-converter",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Cloud ready HTML to PDF converter application running inside docker accessible via an HTTP API",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "docker:image": "docker build -t ideadapt/puppeteer-html-to-pdf-converter:1.0.14 .",
+    "docker:image": "docker build -t ideadapt/puppeteer-html-to-pdf-converter:1.0.15 .",
     "deploy:flyctl": "flyctl deploy",
     "release": "npm run docker:image && npm run deploy:flyctl"
   },
   "author": "Ueli Kunz <kunz@ideadapt.net>",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "express-body-parser-error-handler": "^1.0.4",
-    "express-slow-down": "^1.3.1",
-    "express-validator": "^6.1.1",
+    "express": "^4.19.2",
+    "express-body-parser-error-handler": "^1.0.7",
+    "express-slow-down": "^2.0.3",
+    "express-validator": "^7.2.0",
     "morgan": "^1.10.0",
-    "puppeteer": "^13.7.0"
+    "puppeteer": "^23.3.0"
   },
   "engines": {
-    "node": "14.x"
+    "node": ">=16"
   }
 }
+
