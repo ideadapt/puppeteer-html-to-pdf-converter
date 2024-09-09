@@ -43,11 +43,23 @@ module.exports = async function(req, res) {
     }
 
     const page = await global.browser.newPage();
+    if (req.body['viewportDimensions']) {
+        await page.setViewport({
+            width: Number(req.body['viewportDimensions'].split('x')[0]),
+            height: Number(req.body['viewportDimensions'].split('x')[1])
+          });
+        }
+
     if (req.body.url) {
-        await page.goto(req.body.url);
+        await page.goto(req.body.url, { waitUntil: req.body['waitUntil'] ?? 'networkidle0' });
+        if (req.body['scrollPage']) {
+            await autoScroll(page);
+            await page.waitForNetworkIdle();
+        }
     } else {
         await page.setContent(req.body.html);
     }
+
     const bytes = await page.pdf(pdfOptions);
     await page.close();
 
@@ -55,3 +67,20 @@ module.exports = async function(req, res) {
     res.set("Content-Disposition", `attachment;filename=${req.body['filename'] || 'generated-file'}.pdf`)
     return res.status(200).send(Buffer.from(bytes, 'binary'))
 }
+
+async function autoScroll(page) {
+    await page.evaluate(async () => {
+      await new Promise((resolve) => {
+        let totalHeight = 0;
+        const step = 500;
+        const interval = setInterval(() => {
+          window.scrollBy(0, step);
+          totalHeight += step;
+          if (totalHeight >= document.body.scrollHeight) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 10);
+      });
+    });
+  }

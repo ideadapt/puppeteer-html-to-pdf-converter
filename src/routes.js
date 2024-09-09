@@ -51,6 +51,18 @@ module.exports.register = function(app) {
         check('margin.right').matches(/\d+\w+/).optional(),
         check('margin.bottom').matches(/\d+\w+/).optional(),
         check('margin.left').matches(/\d+\w+/).optional(),
-        check('preferCSSPageSize').isBoolean().optional()
+        check('preferCSSPageSize').isBoolean().optional(),
+        check('waitUntil').custom((value, {req}) => {
+            if (!value) {
+                return true;
+            }
+            const options = ['load', 'domcontentloaded', 'networkidle0', 'networkidle2'];
+            if (options.indexOf(value) === -1) {
+                throw new Error(`Format must be one of ${options.join(',')}`);
+            }
+            return true;
+        }),
+        check('scrollPage').isBoolean().optional(),
+        check('viewportDimensions').matches(/\d+x\d+/).optional()
     ], require('./generate'));
 }
