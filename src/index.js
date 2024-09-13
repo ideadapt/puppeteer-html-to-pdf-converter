@@ -27,11 +27,20 @@ const speedLimiter = slowDown({
       return config('RATE_LIMIT_DELAY_MS') || 500 // add 500ms delay per request, if not slowed down
   }
 });
-app.use(speedLimiter);
+
+// Preflight OPTION requests are sent by browsers before POST for CORS motivations, and should not be rate limited
+const conditionalSpeedLimiter = (req, res, next) => {
+    if (req.method !== 'OPTION') {
+        return speedLimiter(req, res, next);
+    }
+    next();
+};
+
+app.use(conditionalSpeedLimiter);
 
 const bodyMaxLength = config('BODY_MAX_LENGTH') || '1mb'
-app.use(bodyParser.json({ limit: bodyMaxLength }));
-app.use(bodyParser.urlencoded({ extended: true, limit: bodyMaxLength }));
+app.use(bodyParser.json({limit: bodyMaxLength}));
+app.use(bodyParser.urlencoded({extended: true, limit: bodyMaxLength}));
 app.use(bodyParserErrorHandler());
 
 app.use(morgan('[:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":user-agent" :response-time ms'));
