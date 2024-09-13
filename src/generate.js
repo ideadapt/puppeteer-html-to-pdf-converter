@@ -49,7 +49,10 @@ module.exports = async function (req, res) {
         if (req.body.url) {
             let response = await page.goto(req.body.url, {waitUntil: req.body['waitUntil'] ?? 'networkidle0'});
             if (response.status() >= 400) {
-                return res.status(400).json({success: false, errors: [{msg: `Cannot access URL ${req.body.url}, the server returned an error ${response.status()}`}]})
+                return res.status(400).json({
+                    success: false,
+                    errors: [{msg: `Cannot access URL ${req.body.url}, the server returned an error ${response.status()}`}]
+                })
             }
         } else {
             await page.setContent(req.body.html);
@@ -66,9 +69,11 @@ module.exports = async function (req, res) {
         res.set("Content-Disposition", `attachment;filename=${req.body['filename'] || 'generated-file'}.pdf`)
         return res.status(200).send(Buffer.from(bytes, 'binary'))
     } catch (error) {
-        await page.close().catch((e) => {
-            console.error(e)
-        });
+        try {
+            await page.close()
+        } catch (e) {
+            // Nothing to do... try to close in case of error
+        }
         return res.status(500).json({success: false, errors: [{msg: `Internal error : ${error.message}`}]})
     }
 }

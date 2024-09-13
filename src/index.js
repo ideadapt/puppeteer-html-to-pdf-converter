@@ -2,13 +2,11 @@ const express = require('express')
 const morgan = require('morgan')
 const config = require('./config.js');
 
-const port = config('PORT')
-if (!port) throw new Error('PORT config is required')
-
 const bodyParser = require('body-parser');
 const bodyParserErrorHandler = require('express-body-parser-error-handler')
 const cors = require('cors');
 const slowDown = require("express-slow-down");
+const rateLimit = require("express-rate-limit");
 const app = express()
 
 require('./puppeteer').launch();
@@ -18,25 +16,10 @@ if (config('TRUST_PROXY')) {
     app.enable("trust proxy");
 }
 
-const speedLimiter = slowDown({
-  windowMs: (config('RATE_LIMIT_WINDOW') || 1) * 60 * 1000, // within 1min
-  delayAfter:  () => {
-      return config('RATE_LIMIT_DELAY_AFTER') || 20 // allow 20 req (one every 3sec)
-  },
-  delayMs: () => {
-      return config('RATE_LIMIT_DELAY_MS') || 500 // add 500ms delay per request, if not slowed down
-  }
-});
-
-// Preflight OPTION requests are sent by browsers before POST for CORS motivations, and should not be rate limited
-const conditionalSpeedLimiter = (req, res, next) => {
-    if (req.method !== 'OPTION') {
-        return speedLimiter(req, res, next);
-    }
-    next();
-};
-
-app.use(conditionalSpeedLimiter);
+// optional rate limit configuration
+if (config('RATE_LIMIT_GLOBAL_REJECT_AFTER') ?? config('RATE_LIMIT_REJECT_AFTER') ?? config('RATE_LIMIT_DELAY_AFTER')) {
+    configureLimiters();
+}
 
 const bodyMaxLength = config('BODY_MAX_LENGTH') || '1mb'
 app.use(bodyParser.json({limit: bodyMaxLength}));
@@ -48,4 +31,47 @@ app.use(cors());
 app.use(express.static('demo/html-js-client'));
 require('./routes').register(app);
 
-app.listen(port, () => console.log(`listening on port ${port}`));
+app.listen(config('PORT'), () => console.log(`listening on port ${config('PORT')}`));
+
+
+
+function configureLimiters() {
+    // Note : RATE_LIMIT_WINDOW is kept for backward compatibility (deprecated, now you should use RATE_LIMIT_WINDOW_MS)
+    const windowMs = config('RATE_LIMIT_WINDOW_MS') || (config('RATE_LIMIT_WINDOW') * 60 * 1000) || (1 * 60 * 1000); // default to 1 minute
+
+    // Preflight OPTIONS requests are sent by browsers before POST for CORS motivations, and should not be rate limited
+    const skipOptionRequestsFilter = (middleware) => (req, res, next) => {
+        if (req.method !== 'OPTIONS') {
+            return middleware(req, res, next);
+        }
+        next();
+    };
+
+    if (config('RATE_LIMIT_GLOBAL_REJECT_AFTER')) {
+        const globalRateLimiter = rateLimit({
+            windowMs: windowMs,
+            limit: config('RATE_LIMIT_GLOBAL_REJECT_AFTER'),
+            keyGenerator: () => "GLOBAL",
+        })
+        app.use(skipOptionRequestsFilter(globalRateLimiter));
+    }
+
+    if (config('RATE_LIMIT_REJECT_AFTER')) {
+        const perUserRateLimiter = rateLimit({
+            windowMs: windowMs,
+            limit: config('RATE_LIMIT_REJECT_AFTER'),
+        })
+        app.use(skipOptionRequestsFilter(perUserRateLimiter));
+    } else if (config('RATE_LIMIT_DELAY_AFTER')) {
+        const perUserSpeedLimiter = slowDown({
+            windowMs: windowMs,
+            delayAfter: () => {
+                return config('RATE_LIMIT_DELAY_AFTER')
+            },
+            delayMs: () => {
+                return config('RATE_LIMIT_DELAY_MS')
+            }
+        });
+        app.use(skipOptionRequestsFilter(perUserSpeedLimiter));
+    }
+}
