@@ -1,13 +1,31 @@
-const { check } = require('express-validator');
+const {check} = require('express-validator');
+const config = require("./config");
 
-module.exports.register = function(app) {
+module.exports.register = function (app) {
     app.post('/api/generate', [
-        check('url').isURL({require_valid_protocol: true, allow_protocol_relative_urls: false, require_tld: false}).optional(),
+        check('url').isURL({
+            require_valid_protocol: true,
+            allow_protocol_relative_urls: false,
+            require_tld: false
+        }).optional(),
         check('html').optional(),
         check('filename').optional(),
         check('url_html').custom((value, {req}) => {
             if (!req.body.html && !req.body.url) {
                 throw new Error("Must provide either url or html");
+            }
+            return true;
+        }),
+        check('url_allowlist').custom((value, {req}) => {
+            if (config('URL_ALLOWLIST')) {
+                if (req.body.html) {
+                    throw new Error("The config URL_ALLOWLIST is set : you must use url parameter and not html");
+                } else {
+                    const allowlistArray = config('URL_ALLOWLIST').split(',');
+                    if (!allowlistArray.some(allowedUrl => req.body.url.startsWith(allowedUrl))) {
+                        throw new Error(`The URL ${req.body.url} is not in the allowlist`);
+                    }
+                }
             }
             return true;
         }),

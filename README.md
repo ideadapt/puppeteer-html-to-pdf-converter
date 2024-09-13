@@ -126,6 +126,10 @@ Config is read from a `config.json` file in the root folder of the project.
 | `RATE_LIMIT_DELAY_MS`            | Delay to apply to requests above the `RATE_LIMIT_DELAY_AFTER` threshold.                                                                                                                                                    | Required if 'RATE_LIMIT_DELAY_AFTER' is defined                                                                   | 1000    |
 | `RATE_LIMIT_GLOBAL_REJECT_AFTER` | Previous rate limit settings are applied per user (based on IP). If defined, this setting will define a global rate limit for all users. Can be combined either with `RATE_LIMIT_REJECT_AFTER` or `RATE_LIMIT_DELAY_AFTER`. | No                                                                                                                | 100     |
 | `TRUST_PROXY`                    | Set it to true if the server is behind a proxy.                                                                                                                                                                             | No                                                                                                                | true    |
+| `URL_ALLOWLIST`                  | A list of authorized URLs. If this config is defined : 1) "url" values provided in the body should start whith one of the url in the allowlist, 2) "html" content provided in the body is rejected                          | No       | "https://domaineone.com,https://domainetwo.com" |
+
+
+A list of authorized URLs can be provided in the `URL_ALLOWLIST` parameter. If this parameter is not provided, all URLs are authorized.
 
 
 Example `config.json`:
@@ -138,7 +142,8 @@ Example `config.json`:
   "RATE_LIMIT_DELAY_AFTER": 10,
   "RATE_LIMIT_DELAY_MS": 1000,
   "RATE_LIMIT_GLOBAL_REJECT_AFTER": 100,
-  "TRUST_PROXY": true
+  "TRUST_PROXY": true,
+  "URL_ALLOWLIST": "https://domaineone.com,https://domainetwo.com"
 }
 ```
 

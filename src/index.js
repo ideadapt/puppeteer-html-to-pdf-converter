@@ -31,7 +31,7 @@ app.use(cors());
 app.use(express.static('demo/html-js-client'));
 require('./routes').register(app);
 
-app.listen(config('PORT'), () => console.log(`listening on port ${config('PORT')}`));
+app.listen(config('PORT'), () => console.log(`Listening on port ${config('PORT')}`));
 
 
 
