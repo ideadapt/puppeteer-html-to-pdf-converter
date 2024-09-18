@@ -16,9 +16,12 @@ if (config('TRUST_PROXY')) {
     app.enable("trust proxy");
 }
 
-// optional rate limit configuration
+// Add CORS middleware first so that CORS plays well with rate limiter middleware (do not count OPTIONS requests in rate quotas, add CORSs headers to error responses, ...)
+app.use(cors());
+
+// Optional : add rate limiter middlewares according to config
 if (config('RATE_LIMIT_GLOBAL_REJECT_AFTER') ?? config('RATE_LIMIT_REJECT_AFTER') ?? config('RATE_LIMIT_DELAY_AFTER')) {
-    configureLimiters();
+    addRateLimiterMiddlewares();
 }
 
 const bodyMaxLength = config('BODY_MAX_LENGTH') || '1mb'
@@ -27,25 +30,15 @@ app.use(bodyParser.urlencoded({extended: true, limit: bodyMaxLength}));
 app.use(bodyParserErrorHandler());
 
 app.use(morgan('[:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":user-agent" :response-time ms'));
-app.use(cors());
 app.use(express.static('demo/html-js-client'));
 require('./routes').register(app);
 
 app.listen(config('PORT'), () => console.log(`Listening on port ${config('PORT')}`));
 
 
-
-function configureLimiters() {
+function addRateLimiterMiddlewares() {
     // Note : RATE_LIMIT_WINDOW is kept for backward compatibility (deprecated, now you should use RATE_LIMIT_WINDOW_MS)
     const windowMs = config('RATE_LIMIT_WINDOW_MS') || (config('RATE_LIMIT_WINDOW') * 60 * 1000) || (1 * 60 * 1000); // default to 1 minute
-
-    // Preflight OPTIONS requests are sent by browsers before POST for CORS motivations, and should not be rate limited
-    const skipOptionRequestsFilter = (middleware) => (req, res, next) => {
-        if (req.method !== 'OPTIONS') {
-            return middleware(req, res, next);
-        }
-        next();
-    };
 
     if (config('RATE_LIMIT_GLOBAL_REJECT_AFTER')) {
         const globalRateLimiter = rateLimit({
@@ -53,7 +46,7 @@ function configureLimiters() {
             limit: config('RATE_LIMIT_GLOBAL_REJECT_AFTER'),
             keyGenerator: () => "GLOBAL",
         })
-        app.use(skipOptionRequestsFilter(globalRateLimiter));
+        app.use(globalRateLimiter);
     }
 
     if (config('RATE_LIMIT_REJECT_AFTER')) {
@@ -61,7 +54,7 @@ function configureLimiters() {
             windowMs: windowMs,
             limit: config('RATE_LIMIT_REJECT_AFTER'),
         })
-        app.use(skipOptionRequestsFilter(perUserRateLimiter));
+        app.use(perUserRateLimiter);
     } else if (config('RATE_LIMIT_DELAY_AFTER')) {
         const perUserSpeedLimiter = slowDown({
             windowMs: windowMs,
@@ -72,6 +65,6 @@ function configureLimiters() {
                 return config('RATE_LIMIT_DELAY_MS')
             }
         });
-        app.use(skipOptionRequestsFilter(perUserSpeedLimiter));
+        app.use(perUserSpeedLimiter);
     }
 }
