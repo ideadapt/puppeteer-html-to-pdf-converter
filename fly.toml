@@ -1,53 +1,52 @@
-# https://fly.io/docs/reference/configuration
-app = "html2pdf"
-
-kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
-
-[build]
-image = "ideadapt/puppeteer-html-to-pdf-converter:1.0.14"
-
-[env]
-PORT = 8080
+app = 'html2pdf'
+primary_region = 'fra'
+kill_signal = 'SIGINT'
+kill_timeout = '5s'
 
 [experimental]
-allowed_public_ports = []
-auto_rollback = true
-cmd = ["node", "--unhandled-rejections=strict" , "src/index.js"]
+  cmd = ['node', '--unhandled-rejections=strict', 'src/index.js']
+  auto_rollback = true
+
+[build]
+  image = 'ideadapt/puppeteer-html-to-pdf-converter:1.0.14'
+
+[env]
+  PORT = '8080'
 
 [[services]]
-internal_port = 8080
-processes = ["app"]
-protocol = "tcp"
-script_checks = []
+  protocol = 'tcp'
+  internal_port = 8080
+  processes = ['app']
 
-[[services.http_checks]]
-interval = 120000 # 2 * 60 * 1000 => 2min
-grace_period = "10s"
-method = "get"
-path = "/"
-protocol = "http"
-restart_limit = 2
-timeout = 2000
-tls_skip_verify = false
+  [[services.ports]]
+    port = 80
+    handlers = ['http']
+    force_https = true
 
-[services.concurrency]
-hard_limit = 25
-soft_limit = 20
-type = "connections"
+  [[services.ports]]
+    port = 443
+    handlers = ['tls', 'http']
 
-[[services.ports]]
-force_https = true
-handlers = ["http"]
-port = 80
+  [services.concurrency]
+    type = 'connections'
+    hard_limit = 25
+    soft_limit = 20
 
-[[services.ports]]
-handlers = ["tls", "http"]
-port = 443
+  [[services.tcp_checks]]
+    interval = '15s'
+    timeout = '2s'
+    grace_period = '1s'
 
-[[services.tcp_checks]]
-grace_period = "1s"
-interval = "15s"
-restart_limit = 0
-timeout = "2s"
+  [[services.http_checks]]
+    interval = '2m0s'
+    timeout = '2s'
+    grace_period = '10s'
+    method = 'get'
+    path = '/'
+    protocol = 'http'
+    tls_skip_verify = false
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

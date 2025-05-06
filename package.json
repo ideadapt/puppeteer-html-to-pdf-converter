@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "docker:image": "docker build -t ideadapt/puppeteer-html-to-pdf-converter:1.0.14 .",
+    "docker:image": "podman build -t ideadapt/puppeteer-html-to-pdf-converter:1.0.14 .",
     "deploy:flyctl": "flyctl deploy",
     "release": "npm run docker:image && npm run deploy:flyctl"
   },
